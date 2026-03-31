@@ -175,6 +175,27 @@ class _DeckScreenState extends ConsumerState<DeckScreen>
     }
   }
 
+  Future<void> _showAddMethodSheet() async {
+    final result = await showModalBottomSheet<_AddMethod>(
+      context: context,
+      backgroundColor: AppColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => const _AddMethodSheet(),
+    );
+
+    if (!mounted) return;
+
+    if (result == _AddMethod.voice) {
+      await _openVoiceInput();
+    } else if (result == _AddMethod.manual) {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => const CreateCardGoalScreen()),
+      );
+    }
+  }
+
   void _enterJustOneMode() {
     final cards = ref.read(cardsProvider);
     if (cards.isEmpty) return;
@@ -275,13 +296,7 @@ class _DeckScreenState extends ConsumerState<DeckScreen>
               label: 'Add card',
               button: true,
               child: FloatingActionButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const CreateCardGoalScreen(),
-                    ),
-                  );
-                },
+                onPressed: _showAddMethodSheet,
                 child: const Icon(Icons.add),
               ),
             ),
@@ -527,13 +542,7 @@ class _DeckScreenState extends ConsumerState<DeckScreen>
             button: true,
             label: 'Add a card',
             child: FilledButton.icon(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => const CreateCardGoalScreen(),
-                  ),
-                );
-              },
+              onPressed: _showAddMethodSheet,
               icon: const Icon(Icons.add),
               label: const Text('Add a card'),
             ),
@@ -609,6 +618,60 @@ class _CardTile extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+// ─── Add Method Sheet ─────────────────────────────────────────────────────────
+
+enum _AddMethod { voice, manual }
+
+class _AddMethodSheet extends StatelessWidget {
+  const _AddMethodSheet();
+
+  @override
+  Widget build(BuildContext context) {
+    final buttonStyle = OutlinedButton.styleFrom(
+      foregroundColor: AppColors.textMuted,
+      side: BorderSide(color: AppColors.surfaceHigh),
+      padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
+    );
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.page,
+        AppSpacing.md,
+        AppSpacing.page,
+        AppSpacing.md,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Add a card', style: AppTextStyles.sheetTitle),
+          const SizedBox(height: AppSpacing.sm),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: () => Navigator.of(context).pop(_AddMethod.voice),
+              icon: const Icon(Icons.mic_outlined, size: 20),
+              label: const Text('Use voice'),
+              style: buttonStyle,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: () => Navigator.of(context).pop(_AddMethod.manual),
+              icon: const Icon(Icons.edit_outlined, size: 20),
+              label: const Text('Type it'),
+              style: buttonStyle,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+        ],
       ),
     );
   }

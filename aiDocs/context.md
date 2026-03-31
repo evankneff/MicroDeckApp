@@ -43,6 +43,7 @@ MVP is done when a user can go from cold launch to haptic completion in under 90
 
 - Whenever creating plan docs and roadmap docs, always save them in ai/roadmaps. Prefix the name with the date. Add a note that we need to avoid over-engineering, cruft, and legacy-compatibility features in this clean code project. Make sure they reference each other.
 - Whenever finishing with implementing a plan / roadmap doc pair, make sure the roadmap is up to date (tasks checked off, etc). Then save the docs to ai/roadmaps/complete. Then update ai/changelog.md accordingly.
+- After any edits in the code, make sure to update ai/changelog.md accordingly so we know what has been changed, updated, removed, or added.
 
 ---
 
